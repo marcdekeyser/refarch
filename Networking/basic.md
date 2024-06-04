@@ -25,6 +25,7 @@ Caveats:
 
 ## Architecture
 ### Diagram
+![Basic network architecture](/Networking/images/basic.png)
 
 ### Components
 
