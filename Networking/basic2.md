@@ -1,9 +1,10 @@
-# Basic Azure Network Architecture (2 subnets)
+# Basic Azure Network Architecture (3 subnets)
 ## Overview
 Within this pattern, all components of the workload are hosted within a single virtual network.
 Network segmentation is performed only by Network Security Groups. 2 Subnets exist:
 1. *Front-end subnet*: Used for deploying internet facing resources
-2. *Back-end subnet*: used to deploy the non-internet facing resources
+2. *Business logic subnet*: Used for hosting 'intermediate' business logic resources. Non-internet facing.
+3. *Back-end subnet*: used to deploy the non-internet facing resources
 
 Caveats: 
 - Only possible if you're operating solely in a single region, since a virtual network cannot span multiple regions.
@@ -25,7 +26,7 @@ Caveats:
 
 ## Architecture
 ### Diagram
-![Basic network architecture](/Networking/images/basic.png)
+![Basic network architecture](/Networking/images/basic2.png)
 
 ### Components
 *Azure Region*
@@ -49,3 +50,20 @@ Subnets enable you to segment the virtual network into one or more subnetworks a
 You can use an Azure network security group to filter network traffic between Azure resources in an Azure virtual network. A network security group contains security rules that allow or deny inbound network traffic to, or outbound network traffic from, several types of Azure resources. For each rule, you can specify source and destination, port, and protocol.
 
 [Azure Network Security Groups (NSG)](https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview)
+
+### Expected traffic flows
+![Traffic Flow](/Networking/images/basic2-TF.png)
+
+Within the virtual network, by default all traffic will flow freely. We limit this flow by implementing Network Security Groups. The expected flows are as follows:
+
+*Internet to virtual network*: None. No facility for incoming internet traffic is provided in this architecture.  
+
+*Virtual network to the internet*: No restrictions have been placed on outbound internet trafffic. Therefor all resources deployed in this design will be able to establish outgoing connections to the internet.  
+
+*Subnet A to Subnet B*: Traffic from Subnet A to Subnet B is permitted (and vice-versa)
+
+*Subnet B to Subnet C*: Traffic from Subnet B to Subnet C is permitted (and vice-versa) 
+
+*Subnet A to Subnet C*: Traffic from Subnet A to Subnet C is **not** permitted (and vice-versa)
+
+
