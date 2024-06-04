@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworkName": {
+            "value": "vnet-app-prod-we-001"
+        },
+        "vnetAddressPrefix": {
+            "value": "10.2.0.0/16"
+        },
+        "subnet1Prefix": {
+            "value": "10.2.0.0/24"
+        },
+        "subnet1Name": {
+            "value": "snet-app-prod-we-fe-01"
+        },
+        "subnet2Prefix": {
+            "value": "10.2.1.0/24"
+        },
+        "subnet2Name": {
+            "value": "snet-app-prod-we-be-01"
+        },
+        "location": {
+            "value": "westeurope"
+        },
+        "nsg1Name": {
+            "value": "nsg-app-prod-we-fe-1"
+        },
+        "nsg2Name": {
+            "value": "nsg-app-prod-we-be-1"
+        } 
+    }
+}
