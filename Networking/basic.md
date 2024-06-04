@@ -12,7 +12,7 @@ Caveats:
 ## Deploy this!
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fbicep%2Fbasic.arm.bicep)
 
-[Bicep Template](https://github.com/marcdekeyser/refarch/blob/main/bicep/basic.bicep)
+[Bicep Template](https://github.com/marcdekeyser/refarch/blob/main/bicep/basic.bicep)  
 [Bicep Template parameters](https://github.com/marcdekeyser/refarch/blob/main/bicep/basic.parameters.bicep)
 
 ## Built on Zero Trust
