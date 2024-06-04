@@ -1,0 +1,95 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+      "_generator": {
+        "name": "bicep",
+        "version": "0.28.1.47646",
+        "templateHash": "6238849680100629931"
+      }
+    },
+    "parameters": {
+      "virtualNetworkName": {
+        "type": "string"
+      },
+      "vnetAddressPrefix": {
+        "type": "string"
+      },
+      "subnet1Name": {
+        "type": "string"
+      },
+      "subnet1Prefix": {
+        "type": "string"
+      },
+      "subnet2Name": {
+        "type": "string"
+      },
+      "subnet2Prefix": {
+        "type": "string"
+      },
+      "location": {
+        "type": "string"
+      },
+      "nsg1Name": {
+        "type": "string"
+      },
+      "nsg2Name": {
+        "type": "string"
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/virtualNetworks",
+        "apiVersion": "2019-11-01",
+        "name": "[parameters('virtualNetworkName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "[parameters('vnetAddressPrefix')]"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "[parameters('subnet1Name')]",
+              "properties": {
+                "addressPrefix": "[parameters('subnet1Prefix')]",
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsg1Name'))]"
+                }
+              }
+            },
+            {
+              "name": "[parameters('subnet2Name')]",
+              "properties": {
+                "addressPrefix": "[parameters('subnet2Prefix')]",
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsg2Name'))]"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "apiVersion": "2023-04-01",
+        "name": "[parameters('nsg1Name')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "flushConnection": false,
+          "securityRules": []
+        }
+      },
+      {
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "apiVersion": "2023-04-01",
+        "name": "[parameters('nsg2Name')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "flushConnection": false,
+          "securityRules": []
+        }
+      }
+    ]
+  }
