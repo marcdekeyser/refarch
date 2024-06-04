@@ -7,7 +7,7 @@
 * [Zero Trust security](https://learn.microsoft.com/en-us/azure/security/fundamentals/zero-trust)
 
 ## Network Segmentation
-
+* [Azure network-level segmentation](https://learn.microsoft.com/en-us/azure/architecture/networking/guide/network-level-segmentation)
 
 ## Devop apps using zero trust principles
 * [Zero trust approach to identity](https://learn.microsoft.com/en-us/security/zero-trust/develop/identity#top-recommendations-for-zero-trust)

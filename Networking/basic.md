@@ -2,7 +2,7 @@
 ## Overview
 
 ## Built on Zero Trust
-[Find more here](../zerotrust.md)
+[Find more here](/Topics/zerotrust.md)
 
 ## Assumed requirements
 * All resources must be deployed in a secure fashion.
