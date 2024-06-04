@@ -4,4 +4,5 @@ In this repo you'll find reference architectures, with the  'Deploy to Azure' fe
 
 ## Reference Architecture
 ### Networking
-* [Basic Azure Network solution](/Networking/basic.md)
+* [Basic Azure Network solution (2 subnets)](/Networking/basic.md)
+* [Basic Azure Network solution (3 subnets)](/Networking/basic2.md)
