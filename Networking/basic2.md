@@ -19,11 +19,6 @@ Caveats:
 ## Built on network-level segmentation patterns
 [Find more here](/Topics/networksegmentation.md)
 
-## Assumed requirements
-* All resources must be deployed in a secure fashion.
-* No resource should be directly reachable from the internet, unless absolutely required.
-* All resources need to be tagged.
-
 ## Architecture
 ### Diagram
 ![Basic network architecture](/Networking/images/basic2.png)
