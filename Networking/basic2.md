@@ -13,6 +13,11 @@ Caveats:
 ## Deploy this!
 ![Deploy to Azure](https://aka.ms/deploytoazurebutton)(<link to deployment script goes here>)
 
+### Bicep deployment
+[Bicep References](../references.md#bicep)
+* [Bicep Template](https://github.com/marcdekeyser/refarch/blob/main/bicep/basic2.bicep)  
+* [Bicep Template parameters](https://github.com/marcdekeyser/refarch/blob/main/bicep/basic2.parameters.bicep)
+
 ## Built on Zero Trust
 [Find more here](/Topics/zerotrust.md)
 
