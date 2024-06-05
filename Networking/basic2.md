@@ -11,12 +11,12 @@ Caveats:
 - Security of front-end services is entirely on the application as no advantage is taken of native Azure services.
 
 ## Deploy this!
-![Deploy to Azure](https://aka.ms/deploytoazurebutton)(<link to deployment script goes here>)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fbicep%2Fbasic2.arm.json)
 
 ### Bicep deployment
 [Bicep References](../references.md#bicep)
 * [Bicep Template](https://github.com/marcdekeyser/refarch/blob/main/bicep/basic2.bicep)  
-* [Bicep Template parameters](https://github.com/marcdekeyser/refarch/blob/main/bicep/basic2.parameters.bicep)
+
 
 ## Built on Zero Trust
 [Find more here](/Topics/zerotrust.md)
@@ -50,6 +50,9 @@ Subnets enable you to segment the virtual network into one or more subnetworks a
 You can use an Azure network security group to filter network traffic between Azure resources in an Azure virtual network. A network security group contains security rules that allow or deny inbound network traffic to, or outbound network traffic from, several types of Azure resources. For each rule, you can specify source and destination, port, and protocol.
 
 [Azure Network Security Groups (NSG)](https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview)
+
+*Azure Log Analytics workspace*
+All networking logs are collected within a log analytics workspace
 
 ### Expected traffic flows
 ![Traffic Flow](/Networking/images/basic2-TF.png)
