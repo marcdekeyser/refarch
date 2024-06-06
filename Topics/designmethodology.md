@@ -12,11 +12,11 @@ In order to build workloads the following topics should be clearly understood:
 Designing and building on the cloud is not a 'one-and-done' process, but rather a continuous improvement circle where the design and deployment gets reviewed for alignment on a regular cadence!
 
 ## Terminology
-**SLA**: *Service Level Agreement* - (Promise) - An agremeement between provider and client about measurable metrics such as uptime, responsiveness, and responsibilities. The SLA agreement typically also include the consequences of living up to the made promises, such as financial penalties, service credits, or license extensions.
+**SLA**: *Service Level Agreement* - (Promise) - An agremeement between provider and client about measurable metrics such as uptime, responsiveness, and responsibilities. The SLA agreement typically also include the consequences of living up to the made promises, such as financial penalties, service credits, or license extensions.  
 **SLO**: *Service Level Objective* - (Goal) - An agreement within an SLA about a specific metric, such as uptime or response time. Think of the SLA as the formal agreement between you and the customer, and the SLO(s) as the individual promises you're making to that customer.  
 **SLI**: *Service Level Indicator* - (How did we do) - The measurement of compliance with an SLO.  
-**RTO**: *Recovery Time Objective* - How long can an application be unavailable without causing significant damage to the business.
-**RPO**: *Recovery Point Objective* - How much data can be tolerated losing during an unforteseen even.
+**RTO**: *Recovery Time Objective* - How long can an application be unavailable without causing significant damage to the business.  
+**RPO**: *Recovery Point Objective* - How much data can be tolerated losing during an unforteseen even.  
 
 ## 1. Design for business requirements
 Everything starts with clearly understanding the business requirements. Some workloads you deploy to the cloud will have different requirements, and even workloads in the same tier (f.e. Mission Critital) could have different requirements.
