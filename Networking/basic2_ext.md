@@ -1,4 +1,4 @@
-# Basic Azure Network Architecture (2 subnets)
+# Basic Azure Network Architecture (3 subnets)
 ## Overview
 Within this pattern, all components of the workload are hosted within a single virtual network.
 Network segmentation is performed only by Network Security Groups. 2 Subnets exist:
