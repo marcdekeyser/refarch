@@ -1,0 +1,555 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.27.1.19265",
+      "templateHash": "9649418781345335514"
+    }
+  },
+  "parameters": {
+    "appname": {
+      "type": "string",
+      "defaultValue": "app"
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "prod"
+    },
+    "DataClassification": {
+      "type": "string",
+      "defaultValue": "General"
+    },
+    "Criticatity": {
+      "type": "string",
+      "defaultValue": "Business Critical"
+    },
+    "BusinessUnit": {
+      "type": "string",
+      "defaultValue": "Corp"
+    },
+    "OpsCommitment": {
+      "type": "string",
+      "defaultValue": "Workload Operations"
+    },
+    "OpsTeam": {
+      "type": "string",
+      "defaultValue": "Cloud Operations"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "westeurope"
+    },
+    "vnet": {
+      "type": "string",
+      "defaultValue": "[format('vnet-{0}-{1}-{2}', parameters('location'), parameters('appname'), parameters('environment'))]",
+      "metadata": {
+        "description": "Environment parameters"
+      }
+    },
+    "snetappgw": {
+      "type": "string",
+      "defaultValue": "[format('snet-{0}-{1}-{2}-appgw', parameters('location'), parameters('appname'), parameters('environment'))]"
+    },
+    "snetfe": {
+      "type": "string",
+      "defaultValue": "[format('snet-{0}-{1}-{2}-fe', parameters('location'), parameters('appname'), parameters('environment'))]"
+    },
+    "snetbe": {
+      "type": "string",
+      "defaultValue": "[format('snet-{0}-{1}-{2}-be', parameters('location'), parameters('appname'), parameters('environment'))]"
+    },
+    "publicip": {
+      "type": "string",
+      "defaultValue": "[format('pip-{0}-{1}-{2}', parameters('location'), parameters('appname'), parameters('environment'))]"
+    },
+    "appgw": {
+      "type": "string",
+      "defaultValue": "[format('agw-{0}-{1}-{2}', parameters('location'), parameters('appname'), parameters('environment'))]"
+    },
+    "nsgbe": {
+      "type": "string",
+      "defaultValue": "[format('nsg-{0}-{1}-{2}-be', parameters('location'), parameters('appname'), parameters('environment'))]"
+    },
+    "nsgfe": {
+      "type": "string",
+      "defaultValue": "[format('nsg-{0}-{1}-{2}-fe', parameters('location'), parameters('appname'), parameters('environment'))]"
+    },
+    "nsgappgw": {
+      "type": "string",
+      "defaultValue": "[format('nsg-{0}-{1}-{2}-appgw', parameters('location'), parameters('appname'), parameters('environment'))]"
+    },
+    "laworkspacename": {
+      "type": "string",
+      "defaultValue": "[format('la-{0}', parameters('location'))]"
+    },
+    "tagValues": {
+      "type": "object",
+      "defaultValue": {
+        "workloadName": "[parameters('appname')]",
+        "Environment": "[parameters('environment')]",
+        "DataClassification": "[parameters('DataClassification')]",
+        "Criticatity": "[parameters('Criticatity')]",
+        "BusinessUnit": "[parameters('BusinessUnit')]",
+        "OpsCommitment": "[parameters('OpsCommitment')]",
+        "OpsTeam": "[parameters('OpsTeam')]"
+      },
+      "metadata": {
+        "description": "Tags"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2022-10-01",
+      "name": "[parameters('laworkspacename')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "sku": {
+          "name": "PerGB2018"
+        },
+        "retentionInDays": 90,
+        "forceCmkForQuery": false,
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled",
+        "features": {
+          "disableLocalAuth": false,
+          "enableLogAccessUsingOnlyResourcePermissions": true
+        },
+        "workspaceCapping": {
+          "dailyQuotaGb": -1
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-11-01",
+      "name": "[parameters('nsgappgw')]",
+      "location": "westeurope",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "AllowAnyHTTPSInbound",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "10.2.0.0/24",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          },
+          {
+            "name": "AllowAnyHTTPInbound",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "10.2.0.0/24",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          },
+          {
+            "name": "Allow-Any-inbound-snetappgw-65200-65535",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "properties": {
+              "description": "required for app gw",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "65200-65535",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "description": "NSG for the app gw subnet. THis is just an example. Tailor to your security requirements!"
+      }
+    },
+    {
+      "type": "Microsoft.Insights/diagnosticSettings",
+      "apiVersion": "2021-05-01-preview",
+      "scope": "[format('Microsoft.Network/networkSecurityGroups/{0}', parameters('nsgappgw'))]",
+      "name": "to-la",
+      "properties": {
+        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('laworkspacename'))]",
+        "logs": [
+          {
+            "categoryGroup": "allLogs",
+            "enabled": true
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('laworkspacename'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgappgw'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-11-01",
+      "name": "[parameters('nsgbe')]",
+      "location": "westeurope",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-snetFE-Inbound-SnetBE",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "10.2.1.0/24",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          },
+          {
+            "name": "Deny-any-any",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 1000,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "description": "NSG for the back-end subnet. THis is just an example. Tailor to your security requirements!"
+      }
+    },
+    {
+      "type": "Microsoft.Insights/diagnosticSettings",
+      "apiVersion": "2021-05-01-preview",
+      "scope": "[format('Microsoft.Network/networkSecurityGroups/{0}', parameters('nsgbe'))]",
+      "name": "to-la",
+      "properties": {
+        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('laworkspacename'))]",
+        "logs": [
+          {
+            "categoryGroup": "allLogs",
+            "enabled": true
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('laworkspacename'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgbe'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-11-01",
+      "name": "[parameters('nsgfe')]",
+      "location": "westeurope",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-snetAPPGW-inbound-snetfe",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "10.2.0.0/24",
+              "destinationAddressPrefix": "10.2.1.0/24",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          },
+          {
+            "name": "Deny-any-any",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 1000,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "description": "NSG for the front-end subnet. THis is just an example. Tailor to your security requirements!"
+      }
+    },
+    {
+      "type": "Microsoft.Insights/diagnosticSettings",
+      "apiVersion": "2021-05-01-preview",
+      "scope": "[format('Microsoft.Network/networkSecurityGroups/{0}', parameters('nsgfe'))]",
+      "name": "to-la",
+      "properties": {
+        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('laworkspacename'))]",
+        "logs": [
+          {
+            "categoryGroup": "allLogs",
+            "enabled": true
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('laworkspacename'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgfe'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2023-11-01",
+      "name": "[parameters('publicip')]",
+      "location": "westeurope",
+      "sku": {
+        "name": "Standard",
+        "tier": "Regional"
+      },
+      "zones": [
+        "1",
+        "2",
+        "3"
+      ],
+      "properties": {
+        "ipAddress": "172.211.202.19",
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4,
+        "ipTags": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2023-04-01",
+      "name": "[parameters('vnet')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.2.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('snetappgw')]",
+            "properties": {
+              "addressPrefix": "10.2.1.0/24",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgappgw'))]"
+              },
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Disabled"
+            }
+          },
+          {
+            "name": "[parameters('snetfe')]",
+            "properties": {
+              "addressPrefix": "10.2.1.0/24",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgfe'))]"
+              },
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Disabled"
+            }
+          },
+          {
+            "name": "[parameters('snetbe')]",
+            "properties": {
+              "addressPrefix": "10.2.2.0/24",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgbe'))]"
+              },
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Disabled"
+            }
+          }
+        ]
+      },
+      "tags": "[parameters('tagValues')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgappgw'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgbe'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgfe'))]"
+      ],
+      "metadata": {
+        "description": "The virtual network."
+      }
+    },
+    {
+      "type": "Microsoft.Network/applicationGateways",
+      "apiVersion": "2023-11-01",
+      "name": "[parameters('appgw')]",
+      "location": "westeurope",
+      "zones": [
+        "1",
+        "2",
+        "3"
+      ],
+      "properties": {
+        "sku": {
+          "name": "Standard_v2",
+          "tier": "Standard_v2",
+          "family": "Generation_1"
+        },
+        "webApplicationFirewallConfiguration": "[if(true(), createObject('enabled', true(), 'firewallMode', 'detection', 'ruleSetType', 'OWASP', 'ruleSetVersion', '3.2'), null())]",
+        "gatewayIPConfigurations": [
+          {
+            "name": "appGatewayIpConfig",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('snetappgw'), parameters('nsgappgw'))]"
+              }
+            }
+          }
+        ],
+        "sslCertificates": [],
+        "trustedRootCertificates": [],
+        "trustedClientCertificates": [],
+        "sslProfiles": [],
+        "frontendIPConfigurations": [
+          {
+            "name": "appGwPublicFrontendIpIPv4",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicip'))]"
+              }
+            }
+          }
+        ],
+        "frontendPorts": [
+          {
+            "name": "port_80",
+            "properties": {
+              "port": 80
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[format('{0}-backend01', parameters('appgw'))]",
+            "properties": {
+              "backendAddresses": []
+            }
+          }
+        ],
+        "loadDistributionPolicies": [],
+        "backendHttpSettingsCollection": [
+          {
+            "name": "[format('bs-{0}-01', parameters('appgw'))]",
+            "properties": {
+              "port": 80,
+              "protocol": "Http",
+              "cookieBasedAffinity": "Disabled",
+              "pickHostNameFromBackendAddress": false,
+              "requestTimeout": 20
+            }
+          }
+        ],
+        "backendSettingsCollection": [],
+        "httpListeners": [
+          {
+            "name": "[format('lrn-{0}-01', parameters('appgw'))]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', parameters('appgw'), 'appGwPublicFrontendIp')]"
+              },
+              "frontendPort": {
+                "id": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts', parameters('appgw'), 'port_80')]"
+              },
+              "protocol": "Http",
+              "hostNames": [],
+              "requireServerNameIndication": false,
+              "customErrorConfigurations": []
+            }
+          }
+        ],
+        "listeners": [],
+        "urlPathMaps": [],
+        "requestRoutingRules": [
+          {
+            "name": "[format('rr-{0}-01', parameters('appgw'))]",
+            "properties": {
+              "ruleType": "Basic",
+              "priority": 10,
+              "httpListener": {
+                "id": "[resourceId('Microsoft.Network/applicationGateways/httpListeners', parameters('appgw'), 'httpListener')]"
+              },
+              "backendAddressPool": {
+                "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', parameters('appgw'), 'BackendPool')]"
+              },
+              "backendHttpSettings": {
+                "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', parameters('appgw'), 'myHTTPSetting')]"
+              }
+            }
+          }
+        ],
+        "routingRules": [],
+        "probes": [],
+        "rewriteRuleSets": [],
+        "redirectConfigurations": [],
+        "privateLinkConfigurations": [],
+        "enableHttp2": true,
+        "autoscaleConfiguration": {
+          "minCapacity": 0,
+          "maxCapacity": 2
+        }
+      },
+      "tags": "[parameters('tagValues')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicip'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnet'))]"
+      ]
+    }
+  ]
+}
