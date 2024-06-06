@@ -123,3 +123,16 @@ Introducing greater reliability and security obviously impacts your operational 
 Maximizing reliability can impact the overall financial cost of the solution. For example, the duplication of resources and the distribution of resources across regions to achieve high availability has clear cost implications. To avoid excess costs, don't over-engineer or over-provision beyond the relevant business requirements.
 
 Also, there is added cost associated with engineering investment in fundamental reliability concepts, such as embracing infrastructure as code, deployment automation, and chaos engineering. This comes at a cost in terms of both time and effort, which could be invested elsewhere to deliver new application functionality and features.
+
+## 2. Reliability design principles
+Outages and malfunctions are serious concerns for all workloads. A reliable workload must survive those events and continue to consistently provide its intended functionality. It must be resilient so that it can detect, withstand, and recover from failures within an acceptable time period. It must also be available so that users can access the workload during the promised time period at the promised quality level.
+
+It's not realistic to assume failures won't occur, especially when the workload is built to run on distributed systems. Some components might fail while others continue to operate. At some point, the user experience might be affected, which compromises business goals.
+
+Workload architectures should have reliability assurances in application code, infrastructure, and operations. Design choices shouldn't change the intent that's specified by business requirements. Such changes should be considered significant tradeoffs.
+
+The design principles are intended to provide guidance for aspects of reliability that you should consider throughout the development lifecycle. Start with the recommended approaches and justify the benefits for a set of requirements.
+
+### Design for business requirements
+|![](/images/goal.svg)|**Gather business requirements with a focus on the intended utility of the workload.**|
+|---|---|
