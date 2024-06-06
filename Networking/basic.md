@@ -10,12 +10,15 @@ Caveats:
 - Security of front-end services is entirely on the application as no advantage is taken of native Azure services.
 
 ## Deploy this!
+*Please note that the provided deployment is an example and should be tailored to your specific needs*  
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fbicep%2Fbasic.arm.json)
 
 ### Bicep deployment
 [Bicep References](../references.md#bicep)
 * [Bicep Template](https://github.com/marcdekeyser/refarch/blob/main/bicep/basic.bicep)  
 
+## Design methodology
+[Find more here](/Topics/designmethodology.md)
 
 ## Built on Zero Trust
 [Find more here](/Topics/zerotrust.md)
