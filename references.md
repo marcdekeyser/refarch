@@ -25,3 +25,9 @@
 
 ## Cloud Adoption Framework
 * [Tagging strategy](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-tagging#minimum-suggested-tags)
+
+## Azure Front Door
+* [AFD DDoS protection](https://learn.microsoft.com/en-us/azure/frontdoor/front-door-ddos)
+
+## Security Baselines
+* [AFD Security Baseline](https://learn.microsoft.com/en-us/security/benchmark/azure/baselines/azure-front-door-security-baseline?toc=%2Fazure%2Ffrontdoor%2FTOC.json)
