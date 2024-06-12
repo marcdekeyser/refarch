@@ -12,7 +12,8 @@ param logworkspaceName string = 'la-${location}'
 // CIDR for Network
 param vnetAddressPrefix string = '10.0.0.0/16'
 param frontendsSubnetPrefix string = '10.0.0.0/24'
-param backendSubnetPrefix string = '10.0.1.0/24'
+param businesslogicSubnetPrefix string = '10.0.1.0/24'
+param backendSubnetPrefix string = '10.0.2.0/24'
 
 // ---- Variables ----
 var suffix = uniqueString(subscription().subscriptionId, resourceGroup().id)
@@ -41,6 +42,7 @@ module networkModule 'network.bicep' = {
     baseName: baseName
     vnetAddressPrefix: vnetAddressPrefix
     frontendsSubnetPrefix: frontendsSubnetPrefix
+    businesslogicSubnetPrefix: businesslogicSubnetPrefix
     backendSubnetPrefix: backendSubnetPrefix
     logworkspaceid: logWorkspace.id
   }

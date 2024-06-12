@@ -1,64 +1,34 @@
-/*** PARAMETERS ***/
-@description('Name of the workload')
-param appname string = 'app'
-@description('Environment (Prod/Dev/Test)')
-param environment string = 'prod'
-@description('Dataclassification of the workload')
-param DataClassification string = 'General'
-@description('What is the criticality of the workload? (Business critical, ...)')
-param Criticatity string= 'Business Critical'
-@description('Associated Business unit')
-param BusinessUnit string= 'Corp'
-@description('What is the commitment of the operations team?')
-param OpsCommitment string = 'Workload Operations'
-@description('Which team manages the workload?')
-param OpsTeam string = 'Cloud Operations'
-@description('Location for the workload')
+/*
+  Deploy vnet with subnets and NSGs
+
+*/
+
+@description('This is the base name for each Azure resource name')
+param baseName string
+
+@description('The resource group location')
 param location string = resourceGroup().location
-@description('Log Analytics workspace')
-param laworkspaceName string = 'la-${location}'
 
-param tagValues object = {
-  workloadName: appname
-  Environment: environment
-  DataClassification: DataClassification
-  Criticatity: Criticatity
-  BusinessUnit: BusinessUnit
-  OpsCommitment: OpsCommitment
-  OpsTeam: OpsTeam
-}
+@description('The CIDR range for the vnet')
+param vnetAddressPrefix string
 
-/*** Variables ***/
-var suffix = uniqueString(subscription().subscriptionId, resourceGroup().id)
-var baseName = '${location}-${appname}-${environment}-${suffix}'
+@description('The CIDR range for the FE subnet')
+param  frontendsSubnetPrefix string
+
+@description('The CIDR range for the BL Subnet')
+param businesslogicSubnetPrefix string
+
+@description('The CIDR range for the BE Subnet')
+param backendSubnetPrefix string
+
+@description('The ID of the logworkspace')
+param logworkspaceid string
+
+// variables
 var vnetName = 'vnet-${baseName}'
 var subnetFEName = 'snet-${baseName}-FrontEnd'
+var subnetBLName = 'snet-${baseName}-MidTier'
 var subnetBEName = 'snet-${baseName}-BackEnd'
-var subnetAGName = 'snet-${baseName}-AppGW'
-var subnetAgentsName = 'snet-${baseName}-Agents'
-
-// CIDR for Network
-var vnetAddressPrefix = '10.0.0.0/16'
-var appGatewaySubnetPrefix = '10.0.1.0/24'
-var frontendsSubnetPrefix = '10.0.0.0/24'
-var backendSubnetPrefix = '10.0.2.0/24'
-var agentsSubnetPrefix = '10.0.3.0/24'
-
-// Availability Zones
-/var availabilityZones = [ '1', '2', '3' ]
-
-/*** Log Analytics Workspace ***/
-resource laworkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
-  name: laworkspaceName
-  location: location
-  properties: {
-    sku: {
-      name: 'PerGB2018'
-    }
-    retentionInDays: 30
-  }
-}
-
 
 // ---- Networking resources ----
 
@@ -84,6 +54,16 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-11-01' = {
         }
       }
       {
+        //Midtier subnet
+        name: subnetBLName
+        properties: {
+          addressPrefix: businesslogicSubnetPrefix
+          networkSecurityGroup: {
+            id: midtierubnetNsg.id
+          }
+        }
+      }
+      {
         //BackEnd subnet
         name: subnetBEName
         properties: {
@@ -93,51 +73,24 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-11-01' = {
           }
         }
       }
-      {
-        //app gateway subnet
-        name: subnetAGName
-        properties: {
-          addressPrefix: appGatewaySubnetPrefix
-          networkSecurityGroup: {
-            id: appgatewaySubnetNsg.id
-          }
-        }
-      }
-      {
-        // Build agents subnet
-        name: subnetAgentsName
-        properties: {
-          addressPrefix: agentsSubnetPrefix
-          networkSecurityGroup: {
-            id: agentsSubnetNsg.id
-          }
-        }
-      }
     ]
   }
-  resource appGatewaySubnet 'subnets' existing = {
-    name: subnetAGName
-  }
-
   resource appfrontend 'subnets' existing = {
     name: subnetFEName
   }
-
+  resource appmidtier 'subnets' existing = {
+    name: subnetBLName
+  }
   resource backendSubnet 'subnets' existing = {
     name: subnetBEName
   }
-
-  resource agentsSubnet 'subnets' existing = {
-    name: subnetAgentsName
-  }  
-  tags:tagValues
 }
 
 resource vnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   name: 'to-la'
   scope: vnet
   properties: {
-    workspaceId: laworkspace.id
+    workspaceId: logworkspaceid
     metrics: [
       {
         category: 'AllMetrics'
@@ -147,9 +100,9 @@ resource vnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-
   }
 }
 
-// App gateway subnet NSG
-resource appgatewaySubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
-  name: 'nsg-${baseName}-appgw'
+// front end subnet NSG
+resource frontendSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
+  name: 'nsg-${baseName}-frontend'
   location: location
   properties: {
     securityRules: [
@@ -175,7 +128,7 @@ resource appgatewaySubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01
           sourcePortRange: '*'
           destinationPortRange: '443'
           sourceAddressPrefix: 'Internet'
-          destinationAddressPrefix: appGatewaySubnetPrefix
+          destinationAddressPrefix: frontendsSubnetPrefix
           access: 'Allow'
           priority: 110
           direction: 'Inbound'
@@ -209,14 +162,14 @@ resource appgatewaySubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01
         }
       }  
       {
-        name: 'AppGw.Out.Allow.frontend'
+        name: 'frontend.Out.Allow.backend'
         properties: {
-          description: 'Allow outbound traffic from the App Gateway subnet to the front end subnet.'
+          description: 'Allow outbound traffic from the front end subnet to the mid tier subnet.'
           protocol: '*'
           sourcePortRange: '*'
           destinationPortRange: '*'
-          sourceAddressPrefix: appGatewaySubnetPrefix
-          destinationAddressPrefix: frontendsSubnetPrefix
+          sourceAddressPrefix: frontendsSubnetPrefix
+          destinationAddressPrefix: businesslogicSubnetPrefix
           access: 'Allow'
           priority: 100
           direction: 'Outbound'
@@ -225,11 +178,11 @@ resource appgatewaySubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01
       {
         name: 'AppPlan.Out.Allow.AzureMonitor'
         properties: {
-          description: 'Allow outbound traffic from the App Gateway subnet to Azure Monitor'
+          description: 'Allow outbound traffic from the front end subnet to Azure Monitor'
           protocol: '*'
           sourcePortRange: '*'
           destinationPortRange: '*'
-          sourceAddressPrefix: appGatewaySubnetPrefix
+          sourceAddressPrefix: frontendsSubnetPrefix
           destinationAddressPrefix: 'AzureMonitor'
           access: 'Allow'
           priority: 110
@@ -240,11 +193,11 @@ resource appgatewaySubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01
   }
 }
 
-resource nsgappgwSubnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  scope: appgatewaySubnetNsg
+resource nsgfrontendSubnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: frontendSubnetNsg
   name: 'to-la'
   properties: {
-    workspaceId: laworkspace.id
+    workspaceId: logworkspaceid
     logs: [
       {
         categoryGroup: 'allLogs'
@@ -254,37 +207,50 @@ resource nsgappgwSubnet_diagnosticSettings 'Microsoft.Insights/diagnosticSetting
   }
 }
 
-//front end subnet nsg
-resource frontendSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
-  name: 'nsg-${baseName}-frontend'
+// mid tier subnet NSG
+resource midtierubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
+  name: 'nsg-${baseName}-midtier'
   location: location
   properties: {
     securityRules: [
-      {
-        name: 'AppPlan.Out.Allow.PrivateEndpoints'
+            {
+        name: 'midtier.In.Allow.frontend'
         properties: {
-          description: 'Allow outbound traffic from the app service subnet to the back end subnet'
+          description: 'Allow ALL inbound traffic from the frontend subnet'
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '*'
           sourceAddressPrefix: frontendsSubnetPrefix
-          destinationAddressPrefix: backendSubnetPrefix
+          destinationAddressPrefix: businesslogicSubnetPrefix
           access: 'Allow'
-          priority: 100
-          direction: 'Outbound'
+          priority: 110
+          direction: 'Inbound'
         }
       }
       {
-        name: 'AppPlan.Out.Allow.AzureMonitor'
+        name: 'DenyAllInBound'
         properties: {
-          description: 'Allow outbound traffic from App service to the AzureMonitor ServiceTag.'
+          protocol: '*'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '*'
+          destinationPortRange: '*'
+          destinationAddressPrefix: '*'
+          access: 'Deny'
+          priority: 1000
+          direction: 'Inbound'
+        }
+      }  
+      {
+        name: 'frontend.Out.Allow.backend'
+        properties: {
+          description: 'Allow outbound traffic from the front end subnet to the mid tier subnet.'
           protocol: '*'
           sourcePortRange: '*'
           destinationPortRange: '*'
           sourceAddressPrefix: frontendsSubnetPrefix
-          destinationAddressPrefix: 'AzureMonitor'
+          destinationAddressPrefix: businesslogicSubnetPrefix
           access: 'Allow'
-          priority: 110
+          priority: 100
           direction: 'Outbound'
         }
       }
@@ -292,7 +258,21 @@ resource frontendSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' 
   }
 }
 
-//Private endpoints subnets NSG
+resource nsgbusinesslogicSubnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: midtierubnetNsg
+  name: 'to-la'
+  properties: {
+    workspaceId: logworkspaceid
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
+  }
+}
+
+//backend subnets NSG
 resource backendSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
   name: 'nsg-${baseName}-backend'
   location: location
@@ -301,7 +281,7 @@ resource backendSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' =
       {
         name: 'PE.Out.Deny.All'
         properties: {
-          description: 'Deny outbound traffic from the private endpoints subnet'
+          description: 'Deny outbound traffic from the backend subnet'
           protocol: '*'
           sourcePortRange: '*'
           destinationPortRange: '*'
@@ -316,26 +296,19 @@ resource backendSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' =
   }
 }
 
-//Build agents subnets NSG
-resource agentsSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
-  name: 'nsg-${baseName}-buildagents'
-  location: location
+resource nsgbackendSubnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: backendSubnetNsg
+  name: 'to-la'
   properties: {
-    securityRules: [
+    workspaceId: logworkspaceid
+    logs: [
       {
-        name: 'DenyAllOutBound'
-        properties: {
-          description: 'Deny outbound traffic from the build agents subnet. Note: adjust rules as needed after adding resources to the subnet'
-          protocol: '*'
-          sourcePortRange: '*'
-          destinationPortRange: '*'
-          sourceAddressPrefix: agentsSubnetPrefix
-          destinationAddressPrefix: '*'
-          access: 'Deny'
-          priority: 1000
-          direction: 'Outbound'
-        }
+        categoryGroup: 'allLogs'
+        enabled: true
       }
     ]
   }
 }
+
+
+
