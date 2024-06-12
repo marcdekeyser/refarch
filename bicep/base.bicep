@@ -133,6 +133,20 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-11-01' = {
   tags:tagValues
 }
 
+resource vnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  name: 'to-la'
+  scope: vnet
+  properties: {
+    workspaceId: laworkspace.id
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+      }
+    ]
+  }
+}
+
 // App gateway subnet NSG
 resource appgatewaySubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
   name: 'nsg-${baseName}-appgw'
@@ -221,6 +235,20 @@ resource appgatewaySubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01
           priority: 110
           direction: 'Outbound'
         }
+      }
+    ]
+  }
+}
+
+resource nsgappgwSubnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: appgatewaySubnetNsg
+  name: 'to-la'
+  properties: {
+    workspaceId: laworkspace.id
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
       }
     ]
   }
