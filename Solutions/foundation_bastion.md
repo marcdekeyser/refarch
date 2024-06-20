@@ -22,9 +22,9 @@ Broken - [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal
 [Visio](/Solutions/diagrams/foundation_bastion.vsdx)
 
 ### Architecture Diagram
-![Web Application](images/foundation_bastion.png)
+![Web Application](images/foundation_bastion_tf.png)
 
 ### Traffic flow Diagram
-![Web Application](images/foundation_bastion_tf.png)
+![Web Application](images/foundation_bastion.png)
 
 ### Components
