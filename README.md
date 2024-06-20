@@ -15,6 +15,19 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 * [External - Basic Azure Network solution (2 subnets)](/Networking/basic_ext.md)
 * [External - Basic Azure Network solution (3 subnets)](/Networking/basic2_ext.md)
 
+### Solutions
+* [WIP - Foundation with Azure Bastion]()
+* [WIP - Foundation with Azure VPN Gateway]()
+* [WIP - Hub-Spoke Network]()
+* [WIP - Hub-Spoke Network with Azure Firewall]()
+* [WIP - Simple Web App]()
+* [WIP - Web App with Service Bus, functions, and database + storage account](/Solutions/WebApp.md)
+* [WIP - Azure Kubernetes Service]()
+* [WIP - Azure Container Apps]()
+* [WIP - Azure Open AI]()
+
+- WIP: Work in Progress
+
 ## Topics
 * [Design methodology](/Topics/designmethodology.md)
 * [Network segmentation](/Topics/networksegmentation.md)
