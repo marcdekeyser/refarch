@@ -16,8 +16,8 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 * [External - Basic Azure Network solution (3 subnets)](/Networking/basic2_ext.md) (Deploy code Broken - needs refactoring)
 
 ### Solutions
-* [WIP - Foundation with Azure Bastion]()
-* [WIP - Foundation with Azure VPN Gateway]()
+* [WIP - Foundation with Azure Bastion](/Solutions/foundation_bastion.md)
+* [WIP - Foundation with Azure VPN Gateway](/Solutions/foundation_vpn.md)
 * [WIP - Hub-Spoke Network]()
 * [WIP - Hub-Spoke Network with Azure Firewall]()
 * [WIP - Simple Web App]()
