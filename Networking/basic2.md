@@ -18,6 +18,9 @@ Broken - [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal
 [Bicep References](../references.md#bicep)
 * [Bicep Template](https://github.com/marcdekeyser/refarch/blob/main/bicep/basic2/)  
 
+### Cost
+The services used in this template are subject to their normal usage fees and charges. Learn more about the cost of individual services by visiting the [Azure Pricing Calculator](https://azure.microsoft.com/en-us/pricing/calculator/).
+
 ## Design methodology
 [Find more here](/Topics/designmethodology.md)
 
