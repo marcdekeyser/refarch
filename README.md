@@ -12,8 +12,8 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 ### Networking
 * [Internal - Basic Azure Network solution (2 subnets)](/Networking/basic.md)
 * [Internal - Basic Azure Network solution (3 subnets)](/Networking/basic2.md)
-* [External - Basic Azure Network solution (2 subnets)](/Networking/basic_ext.md)
-* [External - Basic Azure Network solution (3 subnets)](/Networking/basic2_ext.md)
+* [External - Basic Azure Network solution (2 subnets)](/Networking/basic_ext.md) (Deploy code Broken - needs refactoring)
+* [External - Basic Azure Network solution (3 subnets)](/Networking/basic2_ext.md) (Deploy code Broken - needs refactoring)
 
 ### Solutions
 * [WIP - Foundation with Azure Bastion]()
