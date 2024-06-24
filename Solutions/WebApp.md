@@ -25,9 +25,10 @@ The services used in this template are subject to their normal usage fees and ch
 [Visio](/Solutions/diagrams/webapp.vsdx)
 
 ### Architecture Diagram
-![Web Application](/Networking/images/webapp.png)
+![Web Application](/Networking/images/webapp_design.png)
 
 ### Traffic flow Diagram
+TODO
 ![Web Application](/Networking/images/webapp_tf.png)
 
 ### Components
