@@ -5,7 +5,7 @@
 *Please note that the provided deployment is an example and should be tailored to your specific needs*  
 Broken - [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fbicep%2Faks_cluster2%2Fdeploy.json)
 
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fbicep%2Faks_cluster2%2Fdeploy.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fbicep%2Faks_cluster%2Fdeploy.json)
 
 ### Bicep deployment
 [Bicep References](../references.md#bicep)
