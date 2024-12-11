@@ -24,16 +24,16 @@ It's also possible the right model for your organizations is not listed here. Th
 
 ### Pattern 1: Single virtual Network
 #### Diagram
-[Pattern 1 - Single virtual Network]()
+![Pattern 1 - Single virtual Network]()
 
 ### Pattern 2: Multiple virtual networks
 #### Diagram
-[Pattern 2 - Multiple virtual Networks]()
+![Pattern 2 - Multiple virtual Networks]()
 
 ### Pattern 3: Multiple virtual networks with meshed peering
 #### Diagram
-[Pattern 3 - Multiple virtual networks with meshed peering]()
+![Pattern 3 - Multiple virtual networks with meshed peering]()
 
 ### Pattern 4: Hub And Spoke model
 #### Diagram
-[Pattern 4 - Hub And Spoke model]()
+![Pattern 4 - Hub And Spoke model]()

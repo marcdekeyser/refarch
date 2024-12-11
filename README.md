@@ -10,7 +10,7 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 
 ## Concepts
 * [Zero Trust](/concepts/zerotrust.md)
-* [Network segmentation](/concepts/zerotrust.md)
+* [Network segmentation](/concepts/networksegmentation.md)
 
 ## Quick starts
 ### Components
