@@ -20,6 +20,7 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 * [WIP - Foundation with Azure VPN Gateway](/Solutions/foundation_vpn.md)
 * [WIP - Hub-Spoke Network]()
 * [WIP - Hub-Spoke Network with Azure Firewall]()
+* [WIP - AKS Cluster](/Solutions/aks_cluster.md)
 * [WIP - Simple Web App]()
 * [WIP - Web App with Service Bus, functions, and database + storage account](/Solutions/WebApp.md)
 * [WIP - Azure Kubernetes Service]()
