@@ -34,12 +34,12 @@ In this setup you have one Virtual Network, with 3 subnets to place entities of 
 
 #### Deploy this!
 *Please note that the provided deployment is an example and should be tailored to your specific needs*  
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern1%2Fpattern1.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern1%2Fmain.json)
 
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern1%2Fpattern1.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern1%2Fmain.json)
 
 #### Bicep deployment
-* [Bicep Template](https://github.com/marcdekeyser/refarch/blob/man/code/NetworkPattern1/pattern1.bicep)  
+* [Bicep Template](https://github.com/marcdekeyser/refarch/blob/man/code/NetworkPattern1/)  
 
 ### Pattern 2: Multiple virtual network
 Like pattern one the components of a workload are contained within a single virtual region. Multiple workloads each have their own virtual network to create segmentation. No communication is possible between the workloads directly (other than possibly routing over the internet)
