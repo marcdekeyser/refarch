@@ -32,14 +32,13 @@ In this pattern all components of a workload are inside of a single virtual regi
 
 In this setup you have one Virtual Network, with 3 subnets to place entities of the workload. Network Security groups would be used to control the flow of traffic between subnets (Front-end can talk to business logic, business logic can talk to back-end, front-end cannot talk to back-end.)
 
-## Deploy this!
+#### Deploy this!
 *Please note that the provided deployment is an example and should be tailored to your specific needs*  
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern1%2Fpattern1.json)
 
 [![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern1%2Fpattern1.json)
 
-### Bicep deployment
-[Bicep References](../references.md#bicep)
+#### Bicep deployment
 * [Bicep Template](https://github.com/marcdekeyser/refarch/blob/man/code/NetworkPattern1/pattern1.bicep)  
 
 ### Pattern 2: Multiple virtual network
