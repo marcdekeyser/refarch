@@ -1,0 +1,459 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.28.1.47646",
+      "templateHash": "480386813261239834"
+    }
+  },
+  "parameters": {
+    "appname": {
+      "type": "string",
+      "defaultValue": "app",
+      "metadata": {
+        "description": "Name of the workload"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the workload"
+      }
+    },
+    "logworkspaceName": {
+      "type": "string",
+      "defaultValue": "[format('la-{0}', parameters('location'))]",
+      "metadata": {
+        "description": "Log Analytics workspace"
+      }
+    }
+  },
+  "variables": {
+    "suffix": "[uniqueString(subscription().subscriptionId, resourceGroup().id)]",
+    "vnets": [
+      {
+        "vnetAddressPrefix": "10.2.0.0/16",
+        "frontendsSubnetPrefix": "10.2.0.0/24",
+        "logicSubnetPrefix": "10.2.1.0/24",
+        "backendSubnetPrefix": "10.2.2.0/24",
+        "baseName": "[format('{0}-{1}-prod-{2}', parameters('location'), parameters('appname'), variables('suffix'))]"
+      },
+      {
+        "vnetAddressPrefix": "10.3.0.0/16",
+        "frontendsSubnetPrefix": "10.3.0.0/24",
+        "logicSubnetPrefix": "10.3.1.0/24",
+        "backendSubnetPrefix": "10.3.2.0/24",
+        "baseName": "[format('{0}-{1}-dev-{2}', parameters('location'), parameters('appname'), variables('suffix'))]"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2022-10-01",
+      "name": "[parameters('logworkspaceName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "sku": {
+          "name": "PerGB2018"
+        },
+        "retentionInDays": 30
+      }
+    },
+    {
+      "copy": {
+        "name": "networkModule",
+        "count": "[length(variables('vnets'))]"
+      },
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}-deployment', variables('vnets')[copyIndex()].vnetName)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "baseName": {
+            "value": "[variables('vnets')[copyIndex()].baseName]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[variables('vnets')[copyIndex()].vnetAddressPrefix]"
+          },
+          "frontendsSubnetPrefix": {
+            "value": "[variables('vnets')[copyIndex()].frontendsSubnetPrefix]"
+          },
+          "businesslogicSubnetPrefix": {
+            "value": "[variables('vnets')[copyIndex()].logicSubnetPrefix]"
+          },
+          "backendSubnetPrefix": {
+            "value": "[variables('vnets')[copyIndex()].backendSubnetPrefix]"
+          },
+          "logworkspaceid": {
+            "value": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logworkspaceName'))]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.28.1.47646",
+              "templateHash": "11400085865297098640"
+            }
+          },
+          "parameters": {
+            "baseName": {
+              "type": "string",
+              "metadata": {
+                "description": "This is the base name for each Azure resource name"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "The resource group location"
+              }
+            },
+            "vnetAddressPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "The CIDR range for the vnet"
+              }
+            },
+            "frontendsSubnetPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "The CIDR range for the FE subnet"
+              }
+            },
+            "businesslogicSubnetPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "The CIDR range for the BL Subnet"
+              }
+            },
+            "backendSubnetPrefix": {
+              "type": "string",
+              "metadata": {
+                "description": "The CIDR range for the BE Subnet"
+              }
+            },
+            "logworkspaceid": {
+              "type": "string",
+              "metadata": {
+                "description": "The ID of the logworkspace"
+              }
+            }
+          },
+          "variables": {
+            "vnetName": "[format('vnet-{0}', parameters('baseName'))]",
+            "subnetFEName": "[format('snet-{0}-FrontEnd', parameters('baseName'))]",
+            "subnetBLName": "[format('snet-{0}-MidTier', parameters('baseName'))]",
+            "subnetBEName": "[format('snet-{0}-BackEnd', parameters('baseName'))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2022-11-01",
+              "name": "[variables('vnetName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('vnetAddressPrefix')]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "[variables('subnetFEName')]",
+                    "properties": {
+                      "addressPrefix": "[parameters('frontendsSubnetPrefix')]",
+                      "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', format('nsg-{0}-frontend', parameters('baseName')))]"
+                      }
+                    }
+                  },
+                  {
+                    "name": "[variables('subnetBLName')]",
+                    "properties": {
+                      "addressPrefix": "[parameters('businesslogicSubnetPrefix')]",
+                      "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', format('nsg-{0}-midtier', parameters('baseName')))]"
+                      }
+                    }
+                  },
+                  {
+                    "name": "[variables('subnetBEName')]",
+                    "properties": {
+                      "addressPrefix": "[parameters('backendSubnetPrefix')]",
+                      "networkSecurityGroup": {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', format('nsg-{0}-backend', parameters('baseName')))]"
+                      }
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', format('nsg-{0}-backend', parameters('baseName')))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', format('nsg-{0}-frontend', parameters('baseName')))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', format('nsg-{0}-midtier', parameters('baseName')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/virtualNetworks/{0}', variables('vnetName'))]",
+              "name": "to-la",
+              "properties": {
+                "workspaceId": "[parameters('logworkspaceid')]",
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2022-11-01",
+              "name": "[format('nsg-{0}-frontend', parameters('baseName'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "AppGw.In.Allow.ControlPlane",
+                    "properties": {
+                      "description": "Allow inbound Control Plane (https://docs.microsoft.com/azure/application-gateway/configuration-infrastructure#network-security-groups)",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "65200-65535",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AppGw.In.Allow443.Internet",
+                    "properties": {
+                      "description": "Allow ALL inbound web traffic on port 443",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "443",
+                      "sourceAddressPrefix": "Internet",
+                      "destinationAddressPrefix": "[parameters('frontendsSubnetPrefix')]",
+                      "access": "Allow",
+                      "priority": 110,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "AppGw.In.Allow.LoadBalancer",
+                    "properties": {
+                      "description": "Allow inbound traffic from azure load balancer",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "AzureLoadBalancer",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 120,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "DenyAllInBound",
+                    "properties": {
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "sourceAddressPrefix": "*",
+                      "destinationPortRange": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Deny",
+                      "priority": 1000,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "frontend.Out.Allow.backend",
+                    "properties": {
+                      "description": "Allow outbound traffic from the front end subnet to the mid tier subnet.",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "[parameters('frontendsSubnetPrefix')]",
+                      "destinationAddressPrefix": "[parameters('businesslogicSubnetPrefix')]",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Outbound"
+                    }
+                  },
+                  {
+                    "name": "AppPlan.Out.Allow.AzureMonitor",
+                    "properties": {
+                      "description": "Allow outbound traffic from the front end subnet to Azure Monitor",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "[parameters('frontendsSubnetPrefix')]",
+                      "destinationAddressPrefix": "AzureMonitor",
+                      "access": "Allow",
+                      "priority": 110,
+                      "direction": "Outbound"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/networkSecurityGroups/{0}', format('nsg-{0}-frontend', parameters('baseName')))]",
+              "name": "to-la",
+              "properties": {
+                "workspaceId": "[parameters('logworkspaceid')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', format('nsg-{0}-frontend', parameters('baseName')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2022-11-01",
+              "name": "[format('nsg-{0}-midtier', parameters('baseName'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "midtier.In.Allow.frontend",
+                    "properties": {
+                      "description": "Allow ALL inbound traffic from the frontend subnet",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "[parameters('frontendsSubnetPrefix')]",
+                      "destinationAddressPrefix": "[parameters('businesslogicSubnetPrefix')]",
+                      "access": "Allow",
+                      "priority": 110,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "DenyAllInBound",
+                    "properties": {
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "sourceAddressPrefix": "*",
+                      "destinationPortRange": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Deny",
+                      "priority": 1000,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "frontend.Out.Allow.backend",
+                    "properties": {
+                      "description": "Allow outbound traffic from the front end subnet to the mid tier subnet.",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "[parameters('frontendsSubnetPrefix')]",
+                      "destinationAddressPrefix": "[parameters('businesslogicSubnetPrefix')]",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Outbound"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/networkSecurityGroups/{0}', format('nsg-{0}-midtier', parameters('baseName')))]",
+              "name": "to-la",
+              "properties": {
+                "workspaceId": "[parameters('logworkspaceid')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', format('nsg-{0}-midtier', parameters('baseName')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2022-11-01",
+              "name": "[format('nsg-{0}-backend', parameters('baseName'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "PE.Out.Deny.All",
+                    "properties": {
+                      "description": "Deny outbound traffic from the backend subnet",
+                      "protocol": "*",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "*",
+                      "sourceAddressPrefix": "[parameters('backendSubnetPrefix')]",
+                      "destinationAddressPrefix": "*",
+                      "access": "Deny",
+                      "priority": 100,
+                      "direction": "Outbound"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "apiVersion": "2021-05-01-preview",
+              "scope": "[format('Microsoft.Network/networkSecurityGroups/{0}', format('nsg-{0}-backend', parameters('baseName')))]",
+              "name": "to-la",
+              "properties": {
+                "workspaceId": "[parameters('logworkspaceid')]",
+                "logs": [
+                  {
+                    "categoryGroup": "allLogs",
+                    "enabled": true
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', format('nsg-{0}-backend', parameters('baseName')))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logworkspaceName'))]"
+      ]
+    }
+  ]
+}

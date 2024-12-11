@@ -48,6 +48,15 @@ Like pattern one the components of a workload are contained within a single virt
 ![Pattern 2 - Multiple virtual Networks](/concepts/images/networkingpattern2.png)
 [visio file](/concepts/diagrams/networkingpattern2.vsdx)
 
+#### Deploy this!
+*Please note that the provided deployment is an example and should be tailored to your specific needs*  
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern2%2Fmain.json)
+
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern2%2Fmain.json)
+
+#### Bicep deployment
+* [Bicep Template](https://github.com/marcdekeyser/refarch/blob/man/code/NetworkPattern2/)  
+
 ### Pattern 3: Multiple virtual networks with meshed peering
 Pattern 3 extends on the previous two patterns, wher you now have multiple virtual networks with peering connections. These connections make it possible for each virtual network to talk to the other virtual networks. This could be a good pattern for when multiple workloads are present that need to be able to communication with each other, or multiple regions within Azure are needed (not represented in the diagram). The network or application security groups should be configured to ensure traffic flows as expected and wanted.
 
