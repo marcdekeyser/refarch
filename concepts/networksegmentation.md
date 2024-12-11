@@ -22,18 +22,37 @@ There are a number of common segmantation patterns in organizing workloads withi
 
 It's also possible the right model for your organizations is not listed here. That's entirely to be expected as no one size truly fits all. 
 
-### Pattern 1: Single virtual Network
-#### Diagram
-![Pattern 1 - Single virtual Network]()
 
-### Pattern 2: Multiple virtual networks
+### Pattern 1: Single virtual Network
+In this pattern all components of a workload are inside of a single virtual region. The entities most likely used for segmentation in this scenario are either Network Security Groups or Application Security Groups. The choice of which depends on if you want to refer to you segments as network subnets, or application groups.
+
 #### Diagram
-![Pattern 2 - Multiple virtual Networks]()
+![Pattern 1 - Single virtual Network](/concepts/images/networkingpattern1.png)
+[visio file](/concepts/diagrams/networkingpattern1.vsdx)
+
+In this setup you have one Virtual Network, with 3 subnets to place entities of the workload. Network Security groups would be used to control the flow of traffic between subnets (Front-end can talk to business logic, business logic can talk to back-end, front-end cannot talk to back-end.)
+
+### Pattern 2: Multiple virtual network
+Like pattern one the components of a workload are contained within a single virtual region. Multiple workloads each have their own virtual network to create segmentation. No communication is possible between the workloads directly (other than possibly routing over the internet)
+
+#### Diagram
+![Pattern 2 - Multiple virtual Networks](/concepts/images/networkingpattern2.png)
+[visio file](/concepts/diagrams/networkingpattern2.vsdx)
 
 ### Pattern 3: Multiple virtual networks with meshed peering
+Pattern 3 extends on the previous two patterns, wher you now have multiple virtual networks with peering connections. These connections make it possible for each virtual network to talk to the other virtual networks. This could be a good pattern for when multiple workloads are present that need to be able to communication with each other, or multiple regions within Azure are needed (not represented in the diagram). The network or application security groups should be configured to ensure traffic flows as expected and wanted.
+
 #### Diagram
-![Pattern 3 - Multiple virtual networks with meshed peering]()
+![Pattern 3 - Multiple virtual networks with meshed peering](/concepts/images/networkingpattern3.png)
+[visio file](/concepts/diagrams/networkingpattern3.vsdx)
 
 ### Pattern 4: Hub And Spoke model
+Unlike pattern 3, where all virtual networks can communicate with each other, in pattern for there is no mesh peering. And because peering is not transitive, only virtual network 1 and 2 can talk with virtual network 3, but not with each other. Using a routing entity, such as Azure Firewall, virtual network 1 and 2 could communicate with each other by routing all traffic over virtual network 3. This allows for the centralization of security postures at the hub (virtual network 3 in this case). This way the hub segments and governs the traffic between virtual networks in a scalable way. 
+
+An added benefit of this pattern is that, as your network topology grows, the security posture overhead does not grow (except in the case of expansion to a new region, where you would setup a new hub).
+
+The recommended Azure cloud native segmentation control is Azure Firewall, which works accross virtual networks and subscriptions to control traffic flow using layer 3 to 7 controls. You can fully define what your communication controls look like (per subnet and even outgoing internet traffic). When you have multiple Azure Firewall instances, you can use Azure Firewall Manager to centrally manage policies across multiple Azure Firewalls and to enable further customization of local polices.
+
 #### Diagram
-![Pattern 4 - Hub And Spoke model]()
+![Pattern 4 - Hub And Spoke model](/concepts/images/networkingpattern4.png)
+[visio file](/concepts/diagrams/networkingpattern4.vsdx)
