@@ -45,11 +45,9 @@ resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   }
 }
 
-
-
 // Deploy vnet1 with subnets and NSGs
 module networkModule 'vnet.bicep' = [for (item, i) in vnets:{
-  name: '${item.vnetName}-deployment'
+  name: '${item.baseName}-deployment'
   params: {
     location: location
     baseName: item.baseName
