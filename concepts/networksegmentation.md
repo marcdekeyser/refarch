@@ -86,3 +86,13 @@ The recommended Azure cloud native segmentation control is Azure Firewall, which
 #### Diagram
 ![Pattern 4 - Hub And Spoke model](/concepts/images/networkingpattern4.png)
 [visio file](/concepts/diagrams/networkingpattern4.vsdx)
+
+#### Deploy this!
+*Please note that the provided deployment is an example and should be tailored to your specific needs*  
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern4%2Fmain.json)
+
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern4%2Fmain.json)
+
+#### Bicep deployment
+For help on deploying bicep resourced please refer to [this page](/code/DeployBicep.md)
+* [Bicep Template](https://github.com/marcdekeyser/refarch/blob/man/code/NetworkPattern4/)  
