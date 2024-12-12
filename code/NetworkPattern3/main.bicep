@@ -96,4 +96,7 @@ module vNETPeering 'peering.bicep' = [for (item, i) in peering:{
     sourceNetworkname: item.sourceNetworkname
     destinationNetworkname: item.destinationNetworkname
   }
+  dependsOn:[
+    networkModule
+  ]
 }]
