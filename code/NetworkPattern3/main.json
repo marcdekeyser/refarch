@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.32.4.45862",
-      "templateHash": "11200085710561147405"
+      "templateHash": "2605246563667446718"
     }
   },
   "parameters": {
@@ -47,6 +47,30 @@
         "logicSubnetPrefix": "10.3.1.0/24",
         "backendSubnetPrefix": "10.3.2.0/24",
         "baseName": "[format('{0}-{1}-dev-{2}', parameters('location'), parameters('appname'), variables('suffix'))]"
+      },
+      {
+        "vnetAddressPrefix": "10.4.0.0/16",
+        "frontendsSubnetPrefix": "10.4.0.0/24",
+        "logicSubnetPrefix": "10.4.1.0/24",
+        "backendSubnetPrefix": "10.4.2.0/24",
+        "baseName": "[format('{0}-{1}-hub-{2}', parameters('location'), parameters('appname'), variables('suffix'))]"
+      }
+    ],
+    "peering": [
+      {
+        "basename": "Peering1",
+        "sourceNetworkname": "[format('vnet-{0}-{1}-prod-{2}', parameters('location'), parameters('appname'), variables('suffix'))]",
+        "destinationNetworkname": "[format('vnet-{0}-{1}-dev-{2}', parameters('location'), parameters('appname'), variables('suffix'))]"
+      },
+      {
+        "basename": "Peering2",
+        "sourceNetworkname": "[format('vnet-{0}-{1}-prod-{2}', parameters('location'), parameters('appname'), variables('suffix'))]",
+        "destinationNetworkname": "[format('vnet-{0}-{1}-hub-{2}', parameters('location'), parameters('appname'), variables('suffix'))]"
+      },
+      {
+        "basename": "Peering3",
+        "sourceNetworkname": "[format('vnet-{0}-{1}-hub-{2}', parameters('location'), parameters('appname'), variables('suffix'))]",
+        "destinationNetworkname": "[format('vnet-{0}-{1}-dev-{2}', parameters('location'), parameters('appname'), variables('suffix'))]"
       }
     ]
   },
@@ -70,7 +94,7 @@
       },
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
-      "name": "[format('{0}-deployment', variables('vnets')[copyIndex()].baseName)]",
+      "name": "[format('{0}-vnet-deployment', variables('vnets')[copyIndex()].baseName)]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -454,6 +478,74 @@
       "dependsOn": [
         "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logworkspaceName'))]"
       ]
+    },
+    {
+      "copy": {
+        "name": "vNETPeering",
+        "count": "[length(variables('peering'))]"
+      },
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('{0}-peering-deployment', variables('peering')[copyIndex()].basename)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "sourceNetworkname": {
+            "value": "[variables('peering')[copyIndex()].sourceNetworkname]"
+          },
+          "destinationNetworkname": {
+            "value": "[variables('peering')[copyIndex()].destinationNetworkname]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.32.4.45862",
+              "templateHash": "1444200431379011727"
+            }
+          },
+          "parameters": {
+            "sourceNetworkname": {
+              "type": "string"
+            },
+            "destinationNetworkname": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2022-07-01",
+              "name": "[format('{0}/{1}', parameters('sourceNetworkname'), format('{0}-To-{1}', parameters('sourceNetworkname'), parameters('destinationNetworkname')))]",
+              "properties": {
+                "allowForwardedTraffic": true,
+                "allowGatewayTransit": false,
+                "remoteVirtualNetwork": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('destinationNetworkname'))]"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2022-07-01",
+              "name": "[format('{0}/{1}', parameters('destinationNetworkname'), format('{0}-To-{1}', parameters('destinationNetworkname'), parameters('sourceNetworkname')))]",
+              "properties": {
+                "allowForwardedTraffic": true,
+                "allowGatewayTransit": false,
+                "remoteVirtualNetwork": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('sourceNetworkname'))]"
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   ]
 }

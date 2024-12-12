@@ -39,6 +39,7 @@ In this setup you have one Virtual Network, with 3 subnets to place entities of 
 [![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern1%2Fmain.json)
 
 #### Bicep deployment
+For help on deploying bicep resourced please refer to [this page](/code/DeployBicep.md)
 * [Bicep Template](https://github.com/marcdekeyser/refarch/blob/man/code/NetworkPattern1/)  
 
 ### Pattern 2: Multiple virtual network
@@ -55,6 +56,7 @@ Like pattern one the components of a workload are contained within a single virt
 [![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern2%2Fmain.json)
 
 #### Bicep deployment
+For help on deploying bicep resourced please refer to [this page](/code/DeployBicep.md)
 * [Bicep Template](https://github.com/marcdekeyser/refarch/blob/man/code/NetworkPattern2/)  
 
 ### Pattern 3: Multiple virtual networks with meshed peering
@@ -63,6 +65,16 @@ Pattern 3 extends on the previous two patterns, wher you now have multiple virtu
 #### Diagram
 ![Pattern 3 - Multiple virtual networks with meshed peering](/concepts/images/networkingpattern3.png)
 [visio file](/concepts/diagrams/networkingpattern3.vsdx)
+
+#### Deploy this!
+*Please note that the provided deployment is an example and should be tailored to your specific needs*  
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern3%2Fmain.json)
+
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmarcdekeyser%2Frefarch%2Fmain%2Fcode%2FNetworkPattern3%2Fmain.json)
+
+#### Bicep deployment
+For help on deploying bicep resourced please refer to [this page](/code/DeployBicep.md)
+* [Bicep Template](https://github.com/marcdekeyser/refarch/blob/man/code/NetworkPattern3/)  
 
 ### Pattern 4: Hub And Spoke model
 Unlike pattern 3, where all virtual networks can communicate with each other, in pattern for there is no mesh peering. And because peering is not transitive, only virtual network 1 and 2 can talk with virtual network 3, but not with each other. Using a routing entity, such as Azure Firewall, virtual network 1 and 2 could communicate with each other by routing all traffic over virtual network 3. This allows for the centralization of security postures at the hub (virtual network 3 in this case). This way the hub segments and governs the traffic between virtual networks in a scalable way. 
