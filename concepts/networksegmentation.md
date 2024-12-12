@@ -1,4 +1,13 @@
 # Network-level segmentation
+
+## Index
+* [Overview](#overview)
+* [Segmentation patterns](#segmentation-patterns)
+* [Pattern 1 - Single virtual network](#pattern-1-single-virtual-network)
+* [Pattern 2 - Multiple virtual network](#pattern-2-multiple-virtual-network)
+* [Pattern 3 - Meshed virtual network](#pattern-3-multiple-virtual-networks-with-meshed-peering)
+* [Pattern 4 - Hub and spoke virtual network](#pattern-4-hub-and-spoke-model)
+
 ## Overview
 Segmentation is a model in which you take your networking footprint and create defined peimeters in Azure. You can then set rules that govern traffic from and to these perimeters so different security postures can be set for various parts of your network.
 

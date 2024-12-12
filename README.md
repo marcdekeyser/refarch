@@ -14,5 +14,10 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 
 ## Quick starts
 ### Components
+#### Networking
+* [Single virtual network - Pattern 1](/concepts/networksegmentation.md)
+* [Multiple virtual networks - Pattern 2](/concepts/networksegmentation.md)
+* [Meshed network - Pattern 3](/concepts/networksegmentation.md)
+* [Hub and Spoke - Pattern 4](/concepts/networksegmentation.md)
 
 ### Solutions
