@@ -32,9 +32,20 @@ param ManagementSubnetPrefix string = '10.2.5.0/24'
 @description('Runner agents subnet CIDR')
 param RunnersSubnetPrefix string = '10.2.6.0/24'
 
-// Fixed Parameters
+// static Parameters
 var suffix = uniqueString(subscription().subscriptionId, resourceGroup().id)
 var baseName = '${location}-${appname}-prod-${suffix}'
+
+// Deploy log analytics workspace
+module loganalyticsmodule 'loganalytics.bicep' = { 
+  name: 'loganalytics-deployment'
+  params: {
+    logworkspaceName: 'la-${baseName}'
+    location: location
+    sku: 'PerGB2018'
+    retention: 30
+  }
+}
 
 // Deploy network resources
 module networkModule 'network.bicep' = {
