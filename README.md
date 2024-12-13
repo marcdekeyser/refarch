@@ -1,4 +1,10 @@
 # Microsoft Azure quickstart Architectures
+## Index
+* [Concepts](#concepts)
+* [Quickstarts](#quick-starts)
+    * [Networking](#networking)
+* [Solutions](#solutions)
+
 ## Overview
 The aim of this repo is to provide you with a number of quickstart architectures, starting from the very basic to get started building your solution in Microsoft Azure. Each of theses architectures are built on (although simplified): 
 

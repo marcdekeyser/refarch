@@ -32,6 +32,7 @@ var subnetBEName = 'snet-${baseName}-BackEnd'
 
 // ---- Networking resources ----
 
+
 // Virtual Networks and subnets
 resource vnet 'Microsoft.Network/virtualNetworks@2022-11-01' = {
   name: vnetName
