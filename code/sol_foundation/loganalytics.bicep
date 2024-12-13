@@ -26,5 +26,10 @@ resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
       name: sku
     }
     retentionInDays: retention
+    publicNetworkAccessForIngestion: 'Disabled'
+    publicNetworkAccessForQuery: 'Disabled'
   }
 }
+
+@description('The resource ID of the deployed log analytics workspace.')
+output resourceId string = logWorkspace.id

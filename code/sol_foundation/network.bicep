@@ -33,8 +33,8 @@ param ManagementSubnetPrefix string
 @description('Runner agents subnet CIDR')
 param RunnersSubnetPrefix string
 
-//@description('The ID of the logworkspace')
-//param logworkspaceid string
+@description('The ID of the logworkspace')
+param logworkspaceid string
 
 // fixed variables
 var vnetName = 'vnet-${baseName}'
@@ -198,10 +198,38 @@ resource bastionSubnetNsg 'Microsoft.Network/networkSecurityGroups@2021-08-01' =
   }
 }
 
+resource nsgbastionSubnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: bastionSubnetNsg
+  name: 'to-la'
+  properties: {
+    workspaceId: logworkspaceid
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
+  }
+}
+
 resource frontendSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
   name: 'nsg-${baseName}-frontend'
   location: location
   properties: {}
+}
+
+resource nsgfrontendSubnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: frontendSubnetNsg
+  name: 'to-la'
+  properties: {
+    workspaceId: logworkspaceid
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
+  }
 }
 
 resource logicSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
@@ -210,10 +238,38 @@ resource logicSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
   properties: {}
 }
 
+resource logicSubnetNsg_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: logicSubnetNsg
+  name: 'to-la'
+  properties: {
+    workspaceId: logworkspaceid
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
+  }
+}
+
 resource backendSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
   name: 'nsg-${baseName}-backend'
   location: location
   properties: {}
+}
+
+resource backendSubnetNsg_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: backendSubnetNsg
+  name: 'to-la'
+  properties: {
+    workspaceId: logworkspaceid
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
+  }
 }
 
 resource managementSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
@@ -222,16 +278,58 @@ resource managementSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01
   properties: {}
 }
 
+resource managementSubnetNsg_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: managementSubnetNsg
+  name: 'to-la'
+  properties: {
+    workspaceId: logworkspaceid
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
+  }
+}
+
 resource servicesSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
   name: 'nsg-${baseName}-services'
   location: location
   properties: {}
 }
 
+resource servicesSubnetNsg_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: servicesSubnetNsg
+  name: 'to-la'
+  properties: {
+    workspaceId: logworkspaceid
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
+  }
+}
+
 resource runneragentsSubnetNsg 'Microsoft.Network/networkSecurityGroups@2022-11-01' = {
   name: 'nsg-${baseName}-runneragents'
   location: location
   properties: {}
+}
+
+resource runneragentsSubnetNsg_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  scope: runneragentsSubnetNsg
+  name: 'to-la'
+  properties: {
+    workspaceId: logworkspaceid
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
+  }
 }
 
 
@@ -284,6 +382,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-11-01' = {
           networkSecurityGroup: {
             id: servicesSubnetNsg.id
           }
+          privateEndpointNetworkPolicies: 'Disabled'
         }
       }
       {
@@ -340,3 +439,30 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-11-01' = {
     name: subnetRAName
   }
 }
+
+resource vnet_diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+  name: 'to-la'
+  scope: vnet
+  properties: {
+    workspaceId: logworkspaceid
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+      }
+    ]
+  }
+}
+
+@description('The resource ID of the virtual network.')
+output resourceId string = vnet.id
+
+@description('The name of the virtual network.')
+output name string = vnet.name
+
+output frontendsubnetid string = vnet::appfrontend.id
+output logicsubnetid string = vnet::appmidtier.id
+output backendsubnetid string = vnet::backendSubnet.id
+output servicessubnetid string = vnet::servicesSubnet.id
+output bastionsubnetid string = vnet::BastionSubnet.id
+output managementsubnetid string = vnet::ManagementSubnet.id
