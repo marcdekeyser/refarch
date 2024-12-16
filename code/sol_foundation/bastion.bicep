@@ -20,15 +20,16 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-09-01' existing = {
 }
 
 // Public IP Adresds
-resource bastionPublicIpAddress 'Microsoft.Network/publicIPAddresses@2021-08-01' = {
-  name: 'pip-${baseName}-bastion'
-  location: location
-  sku: {
-    name: 'Standard'
-  }
-  properties: {
+module bastionPublicIpAddress 'publicip.bicep' = {
+  name: 'PIP-Bastion-deployment'
+  params:{
+    publicIpAddressName: 'pip-bastion'
+    location: location
+    sku: 'Standard'
     publicIPAllocationMethod: 'Static'
-  }
+    ddosProtectionMode: 'Enabled' 
+
+  } 
 }
 
 resource bastionHost 'Microsoft.Network/bastionHosts@2021-08-01' = {
@@ -43,7 +44,7 @@ resource bastionHost 'Microsoft.Network/bastionHosts@2021-08-01' = {
             id: '${vnet.id}/subnets/${bastionSubnetName}'
           }
           publicIPAddress: {
-            id: bastionPublicIpAddress.id
+            id: bastionPublicIpAddress.outputs.pipid
           }
         }
       }

@@ -1,0 +1,156 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "publicIpAddressName": {
+            "type": "string",
+            "defaultValue": "myPublicIPAddress",
+            "metadata": {
+                "description": "Name of the public IP address resource."
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure region for the deployment, resource group and resources."
+            }
+        },
+        "extendedLocation": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "sku": {
+            "type": "string",
+            "metadata": {
+                "description": "Sku for the resource."
+            }
+        },
+        "domainNameLabel": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Domain name label for the resource."
+            }
+        },
+        "domainNameLabelScope": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Domain name label scope for the resource."
+            }
+        },
+        "routingPreference": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Routing Preference for the resource."
+            }
+        },
+        "publicIPAllocationMethod": {
+            "type": "string",
+            "allowedValues": [
+                "Dynamic",
+                "Static"
+            ],
+            "metadata": {
+                "description": "Allocation method for the resource."
+            }
+        },
+        "publicIpAddressVersion": {
+            "type": "string",
+            "defaultValue": "IPv4",
+            "allowedValues": [
+                "IPv4",
+                "IPv6"
+            ],
+            "metadata": {
+                "description": "Version for the resource."
+            }
+        },
+        "idleTimeoutInMinutes": {
+            "type": "int",
+            "defaultValue": 4,
+            "metadata": {
+                "description": "Idle Timeout for the resource."
+            }
+        },
+        "tier": {
+            "type": "string",
+            "allowedValues": [
+                "Regional",
+                "Global"
+            ],
+            "defaultValue": "Regional",
+            "metadata": {
+                "description": "Tier for the resource."
+            }
+        },
+        "zones": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Zones for the resource."
+            }
+        },
+        "ddosProtectionMode": {
+            "type": "string",
+            "allowedValues": [
+                "Disabled",
+                "Enabled",
+                "VirtualNetworkInherited"
+            ]
+        },
+        "tagsByResource": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Optional tags for the resources."
+            }
+        }
+    },
+    "variables": {
+        "dns": {
+            "domainNameLabel": "[parameters('domainNameLabel')]",
+            "domainNameLabelScope": "[parameters('domainNameLabelScope')]"
+        },
+        "tags": [
+            {
+                "ipTagType": "RoutingPreference",
+                "tag": "[parameters('routingPreference')]"
+            }
+        ],
+        "ipTagsVariable": "[if(empty(parameters('routingPreference')), json('null'), variables('tags'))]",
+        "ddosSettings": "[if(empty(parameters('ddosProtectionMode')), json('null'), createObject('protectionMode', parameters('ddosProtectionMode')))]",
+        "propertiesNoDns": {
+            "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+            "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]",
+            "publicIpAddressVersion": "[parameters('publicIpAddressVersion')]",
+            "ipTags": "[variables('ipTagsVariable')]",
+            "ddosSettings": "[variables('ddosSettings')]"
+        },
+        "propertiesDns": {
+            "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+            "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]",
+            "publicIpAddressVersion": "[parameters('publicIpAddressVersion')]",
+            "dnsSettings": "[variables('dns')]",
+            "ipTags": "[variables('ipTagsVariable')]",
+            "ddosSettings": "[variables('ddosSettings')]"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2022-11-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIpAddressName')]",
+            "location": "[parameters('location')]",
+            "extendedLocation": "[if(empty(parameters('extendedLocation')), null(), parameters('extendedLocation'))]",
+            "zones": "[parameters('zones')]",
+            "tags": "[parameters('tagsByResource')]",
+            "sku": {
+                "name": "[parameters('sku')]",
+                "tier": "[parameters('tier')]"
+            },
+            "properties": "[if(empty(parameters('domainNameLabel')), variables('propertiesNoDns'), variables('propertiesDns'))]"
+        }
+    ]
+}

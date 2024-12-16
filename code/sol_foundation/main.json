@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.32.4.45862",
-      "templateHash": "10933104237662786389"
+      "templateHash": "3310540365129395917"
     }
   },
   "parameters": {
@@ -1057,7 +1057,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.32.4.45862",
-              "templateHash": "15303217770538506845"
+              "templateHash": "6247735463242776364"
             }
           },
           "parameters": {
@@ -1089,18 +1089,6 @@
           },
           "resources": [
             {
-              "type": "Microsoft.Network/publicIPAddresses",
-              "apiVersion": "2021-08-01",
-              "name": "[format('pip-{0}-bastion', parameters('baseName'))]",
-              "location": "[parameters('location')]",
-              "sku": {
-                "name": "Standard"
-              },
-              "properties": {
-                "publicIPAllocationMethod": "Static"
-              }
-            },
-            {
               "type": "Microsoft.Network/bastionHosts",
               "apiVersion": "2021-08-01",
               "name": "[format('bas-{0}', parameters('baseName'))]",
@@ -1114,15 +1102,217 @@
                         "id": "[format('{0}/subnets/{1}', resourceId('Microsoft.Network/virtualNetworks', parameters('vnetname')), parameters('bastionSubnetName'))]"
                       },
                       "publicIPAddress": {
-                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('pip-{0}-bastion', parameters('baseName')))]"
+                        "id": "[reference(resourceId('Microsoft.Resources/deployments', 'PIP-Bastion-deployment'), '2022-09-01').outputs.pipid.value]"
                       }
                     }
                   }
                 ]
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', format('pip-{0}-bastion', parameters('baseName')))]"
+                "[resourceId('Microsoft.Resources/deployments', 'PIP-Bastion-deployment')]"
               ]
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "PIP-Bastion-deployment",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "publicIpAddressName": {
+                    "value": "pip-bastion"
+                  },
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "sku": {
+                    "value": "Standard"
+                  },
+                  "publicIPAllocationMethod": {
+                    "value": "Static"
+                  },
+                  "ddosProtectionMode": {
+                    "value": "Enabled"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.32.4.45862",
+                      "templateHash": "2548089450870272940"
+                    }
+                  },
+                  "parameters": {
+                    "publicIpAddressName": {
+                      "type": "string",
+                      "defaultValue": "myPublicIPAddress",
+                      "metadata": {
+                        "description": "Name of the public IP address resource."
+                      }
+                    },
+                    "location": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Azure region for the deployment, resource group and resources."
+                      }
+                    },
+                    "extendedLocation": {
+                      "type": "object",
+                      "defaultValue": {}
+                    },
+                    "sku": {
+                      "type": "string",
+                      "defaultValue": "Standard",
+                      "allowedValues": [
+                        "Standard",
+                        "Basic"
+                      ],
+                      "metadata": {
+                        "description": "Sku for the resource."
+                      }
+                    },
+                    "domainNameLabel": {
+                      "type": "string",
+                      "defaultValue": "",
+                      "metadata": {
+                        "description": "Domain name label for the resource."
+                      }
+                    },
+                    "domainNameLabelScope": {
+                      "type": "string",
+                      "defaultValue": "",
+                      "metadata": {
+                        "description": "Domain name label scope for the resource."
+                      }
+                    },
+                    "routingPreference": {
+                      "type": "string",
+                      "defaultValue": "",
+                      "metadata": {
+                        "description": "Routing Preference for the resource."
+                      }
+                    },
+                    "publicIPAllocationMethod": {
+                      "type": "string",
+                      "allowedValues": [
+                        "Dynamic",
+                        "Static"
+                      ],
+                      "metadata": {
+                        "description": "Allocation method for the resource."
+                      }
+                    },
+                    "publicIpAddressVersion": {
+                      "type": "string",
+                      "defaultValue": "IPv4",
+                      "allowedValues": [
+                        "IPv4",
+                        "IPv6"
+                      ],
+                      "metadata": {
+                        "description": "Version for the resource."
+                      }
+                    },
+                    "idleTimeoutInMinutes": {
+                      "type": "int",
+                      "defaultValue": 4,
+                      "metadata": {
+                        "description": "Idle Timeout for the resource."
+                      }
+                    },
+                    "tier": {
+                      "type": "string",
+                      "defaultValue": "Regional",
+                      "allowedValues": [
+                        "Regional",
+                        "Global"
+                      ],
+                      "metadata": {
+                        "description": "Tier for the resource."
+                      }
+                    },
+                    "zones": {
+                      "type": "array",
+                      "defaultValue": [],
+                      "metadata": {
+                        "description": "Zones for the resource."
+                      }
+                    },
+                    "ddosProtectionMode": {
+                      "type": "string",
+                      "allowedValues": [
+                        "Disabled",
+                        "Enabled",
+                        "VirtualNetworkInherited"
+                      ]
+                    },
+                    "tagsByResource": {
+                      "type": "object",
+                      "defaultValue": {},
+                      "metadata": {
+                        "description": "Optional tags for the resources."
+                      }
+                    }
+                  },
+                  "variables": {
+                    "dns": {
+                      "domainNameLabel": "[parameters('domainNameLabel')]",
+                      "domainNameLabelScope": "[parameters('domainNameLabelScope')]"
+                    },
+                    "tags": [
+                      {
+                        "ipTagType": "RoutingPreference",
+                        "tag": "[parameters('routingPreference')]"
+                      }
+                    ],
+                    "ipTagsVariable": "[if(empty(parameters('routingPreference')), json('null'), variables('tags'))]",
+                    "ddosSettings": "[if(empty(parameters('ddosProtectionMode')), json('null'), createObject('protectionMode', parameters('ddosProtectionMode')))]",
+                    "propertiesNoDns": {
+                      "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+                      "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]",
+                      "publicIpAddressVersion": "[parameters('publicIpAddressVersion')]",
+                      "ipTags": "[variables('ipTagsVariable')]",
+                      "ddosSettings": "[variables('ddosSettings')]"
+                    },
+                    "propertiesDns": {
+                      "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+                      "idleTimeoutInMinutes": "[parameters('idleTimeoutInMinutes')]",
+                      "publicIpAddressVersion": "[parameters('publicIpAddressVersion')]",
+                      "dnsSettings": "[variables('dns')]",
+                      "ipTags": "[variables('ipTagsVariable')]",
+                      "ddosSettings": "[variables('ddosSettings')]"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Network/publicIPAddresses",
+                      "apiVersion": "2022-11-01",
+                      "name": "[parameters('publicIpAddressName')]",
+                      "location": "[parameters('location')]",
+                      "extendedLocation": "[if(empty(parameters('extendedLocation')), null(), parameters('extendedLocation'))]",
+                      "zones": "[parameters('zones')]",
+                      "tags": "[parameters('tagsByResource')]",
+                      "sku": {
+                        "name": "[parameters('sku')]",
+                        "tier": "[parameters('tier')]"
+                      },
+                      "properties": "[if(empty(parameters('domainNameLabel')), variables('propertiesNoDns'), variables('propertiesDns'))]"
+                    }
+                  ],
+                  "outputs": {
+                    "pipid": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpAddressName'))]"
+                    }
+                  }
+                }
+              }
             }
           ]
         }
