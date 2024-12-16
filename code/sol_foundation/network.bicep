@@ -466,3 +466,4 @@ output backendsubnetid string = vnet::backendSubnet.id
 output servicessubnetid string = vnet::servicesSubnet.id
 output bastionsubnetid string = vnet::BastionSubnet.id
 output managementsubnetid string = vnet::ManagementSubnet.id
+output runneragentsubnetid string = vnet::ManagementSubnet.id

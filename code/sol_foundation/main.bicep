@@ -32,6 +32,20 @@ param ManagementSubnetPrefix string = '10.2.5.0/24'
 @description('Runner agents subnet CIDR')
 param RunnersSubnetPrefix string = '10.2.6.0/24'
 
+@description('Management VM username')
+param managementVMUser string = 'azAdmin'
+
+@description('Management VM password')
+@secure()
+param managementVMPassword string = 'Welcome2024!'
+
+@description('Runner Agent VM username')
+param runnerVMUser string = 'azAdmin'
+
+@description('Runner Agent VM password')
+@secure()
+param runnerVMPassword string = 'Welcome2024!'
+
 // static Parameters
 var suffix = uniqueString(subscription().subscriptionId, resourceGroup().id)
 var baseName = '${location}-${appname}-prod-${suffix}'
@@ -256,5 +270,31 @@ resource keyVaultPrivateDnsZoneVnetLink 'Microsoft.Network/privateDnsZones/virtu
     virtualNetwork: {
       id: networkModule.outputs.resourceId
     }
+  }
+}
+
+module ManagementVM 'vm.bicep' = {
+  name: 'ManagementVM-Deployment'
+  params:{
+    location: location
+    subnetId: networkModule.outputs.managementsubnetid
+    // Windows computer name cannot be more than 15 characters long, be entirely numeric, or contain the following characters: ` ~ ! @ # $ % ^ & * ( ) = + _ [ ] { } \ | ; : . ' " , < > / ?.
+    vmName: 'Mgmt01'
+    vmAdminUserName: managementVMUser
+    vmAdminPassword: managementVMPassword
+    vmSize: 'Standard_B2ms'
+  }
+}
+
+module runnerAgentVM 'vm.bicep' ={
+  name: 'RunnerAgentVM-Deployment'
+  params:{
+    location: location
+    subnetId: networkModule.outputs.runneragentsubnetid
+    vmAdminPassword: runnerVMPassword
+    vmAdminUserName: runnerVMUser
+    // Windows computer name cannot be more than 15 characters long, be entirely numeric, or contain the following characters: ` ~ ! @ # $ % ^ & * ( ) = + _ [ ] { } \ | ; : . ' " , < > / ?.
+    vmName: 'RA01'
+    vmSize: 'Standard_B2ms'
   }
 }
