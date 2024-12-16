@@ -1,11 +1,16 @@
 # All in one foundation
 ## Index
+* [Description](#description)
+* [Deploy to Azure](#deploy-to-azure)
+* [Design](#design)
+* [Components](#components)
 
 ## Description
 This sample architecture aims to give you a headstart to deploying a secure and scalable environment within Azure. 
 
 ## Deploy this 
 *Please note that the provided deployment is an example and should be tailored to your specific needs* 
+
 ### Prerequisites
 You'll need an active Azure subscription. If you do not have one you can create a [free Azure account](https://azure.microsoft.com/free/) before beginning.
 
@@ -28,7 +33,7 @@ For help on deploying bicep resourced please refer to [this page](/code/DeployBi
 *Diagram: Design diagram of the foundational solution*
 [visio file](/Solutions/Foundation/diagrams/sol_foundation.vsdx)
 
-Components:
+###Components
 * **Virtual Network**: Foundational to our secure infrastructure we need a vNET to segment our networks
 * **Subnet**: Multiple subnets are deployed in order to support segmenting the network. Each subnet is tied to a functionality:
 - *Front-end*: This subnet would host our front-end services for the application.
@@ -44,4 +49,4 @@ Components:
 * **Azure Bastion**: Azure bastion is a fully managed PaaS service to securely connect to virtual machines via private IP address. It protects these virtual machines from exposing RDP or SSH ports to the outside world, while still allowing access over these ports.
 A public IP address is created to allow accessing bastion, and is secured by DDoS single IP protection.
 * **Management virtual machine**: Since our resources are all private we need a way to manage them
-* **Runner Agents virtual machine**: Since our resources are all private, we can't trigger pipeline actions to change them over the public internet. Runner agents solve this by connecting to the pipeline securely and executing the tasks on-behalg.
+* **Runner Agents virtual machine**: Since our resources are all private, we can't trigger pipeline actions to change them over the public internet. Runner agents solve this by connecting to the pipeline securely and executing the tasks on-behalf.

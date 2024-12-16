@@ -27,3 +27,5 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 * [Hub and Spoke - Pattern 4](/concepts/networksegmentation.md)
 
 ### Solutions
+#### Foundation
+* [All-in-one foundation platform](/Solutions/Foundation/foundation.md)
