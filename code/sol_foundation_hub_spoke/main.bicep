@@ -1,11 +1,20 @@
 // ---- Parameters ----
+@description('Name of the workload')
+param appname string = 'app'
+
+@description('Workload environment')
+@allowed([
+  'prod'
+  'acc'
+  'test'
+  'dev'
+])
+param env string = 'prod'
 
 @description('Location for the workload')
 param location string = resourceGroup().location
 
-//@description('Log Analytics workspace')
-//param logworkspaceName string = 'la-${location}'
-
+// HUB vNET params
 @description('HUB vNET CIDR')
 param hubvnetAddressPrefix string = '10.3.0.0/16'
 
@@ -21,6 +30,23 @@ param ManagementSubnetPrefix string = '10.3.2.0/24'
 @description('HUB Runner agents subnet CIDR')
 param RunnersSubnetPrefix string = '10.3.3.0/24'
 
+// Spoke vNET params
+@description('spoke vNET CIDR')
+param spokeVnetAddressPrefix string = '10.2.0.0/16'
+
+@description('Spoke front-end subnet CIDR')
+param spokeFrontendSubnetPrefix string = '10.2.0.0/24'
+
+@description('Spoke business logic subnet CIDR')
+param spokeMidtierSubnetPrefix string = '10.2.1.0/24'
+
+@description('Spoke back-end subnet CIDR')
+param spokeBackendSubnetPrefix string = '10.2.2.0/24'
+
+@description('Spoke services subnet CIDR')
+param spokeServicesSubnetPrefix string = '10.2.3.0/24'
+
+// VM params
 @description('Management VM username')
 param managementVMUser string = 'azAdmin'
 
@@ -34,6 +60,9 @@ param runnerVMUser string = 'azAdmin'
 @description('Runner Agent VM password')
 @secure()
 param runnerVMPassword string = 'Welcome2024!' //This is not good practice since it's supposed to be secure!
+
+// variables
+var suffix = uniqueString(subscription().subscriptionId, resourceGroup().id)
 
 // ---- Deploying log analytics workspace ----
 module workspaceModule 'modules/loganalytics.bicep' = {
@@ -128,4 +157,45 @@ module runnerAgentVM 'modules/vm.bicep' ={
     vmSize: 'Standard_B2ms'
   }
 }
+
+// ---- Deploying Spoke application network ----
+module NetworkSpoke 'modules/networkSpoke.bicep' = {
+  name: 'NetworkSpoke-${appname}-${env}-deployment'
+  params:{
+    baseName: '${location}-${appname}-${env}-${suffix}'
+    location: location
+    vnetAddressPrefix: spokeVnetAddressPrefix
+    frontendSubnetPrefix: spokeFrontendSubnetPrefix
+    midtierSubnetPrefix: spokeMidtierSubnetPrefix
+    backendubnetPrefix: spokeBackendSubnetPrefix
+    servicesSubnetPrefix: spokeServicesSubnetPrefix
+    logworkspaceid: workspaceModule.outputs.resourceId
+  }
+}
+
+// ---- Deploying peering between hub and spoke ----
+module vNETPeering 'modules/peering.bicep' = {
+name: 'vNETPeering-Deployment'
+params:{
+  sourceNetworkname:  'vnet-hub'
+  destinationNetworkname: 'vnet-${location}-${appname}-${env}-${suffix}'
+  }
+  dependsOn:[
+    NetworkSpoke
+  ]
+}
+
+// ---- Deploying keyvault ----
+module spokeKeyVault 'modules/keyvault.bicep' = {
+  name: 'keyvault-${appname}-${env}-deployment'
+  params:{
+    suffix: suffix
+    location: location
+    vNETResourceID: NetworkSpoke.outputs.vnetResourceId
+    subnetResourceID: NetworkSpoke.outputs.servicesSubnetID
+    privateDnsZoneName: 'privatelink${environment().suffixes.keyvaultDns}'
+
+  }
+}
+
 

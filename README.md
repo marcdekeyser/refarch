@@ -31,3 +31,4 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 ### Solutions
 #### Foundation
 * [All-in-one foundation platform](/Solutions/Foundation/foundation.md)
+* [Hub and spoke foundation](/Solutions/Foundation_hub_spoke/foundation.md)

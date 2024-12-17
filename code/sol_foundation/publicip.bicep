@@ -82,7 +82,7 @@ var ddosSettings = (empty(ddosProtectionMode)
 var propertiesNoDns = {
   publicIPAllocationMethod: publicIPAllocationMethod
   idleTimeoutInMinutes: idleTimeoutInMinutes
-  publicIpAddressVersion: publicIpAddressVersion
+  publicIPAddressVersion: publicIpAddressVersion
   ipTags: ipTagsVariable
   ddosSettings: ddosSettings
 }
@@ -91,7 +91,7 @@ var propertiesNoDns = {
 var propertiesDns = {
   publicIPAllocationMethod: publicIPAllocationMethod
   idleTimeoutInMinutes: idleTimeoutInMinutes
-  publicIpAddressVersion: publicIpAddressVersion
+  publicIPAddressVersion: publicIpAddressVersion
   dnsSettings: dns
   ipTags: ipTagsVariable
   ddosSettings: ddosSettings
