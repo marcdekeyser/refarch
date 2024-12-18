@@ -7,3 +7,4 @@
 * [public IP address](/code/01%20-%20Modules/modules/pip.bicep)
 * [virtual network](/code/01%20-%20Modules/docs/vNET.md)
 * [Network Security Group](/code/01%20-%20Modules/docs/nsg.md)
+* [Private DNS Zone](/code/01%20-%20Modules/docs/privateDnsZone.md)
