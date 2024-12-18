@@ -21,7 +21,7 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 ## Quick starts
 ### Components
 * [Hub platform](/components/hubplatform.md) - Basic foundational platform that can be used to peer spoke networks to. Ideal for centralization of certain resources.
-* [AKS platofrm](/components/diagrams/comp_aks.vsdx) - AKS deployment with WAF aligned paramets.
+* [AKS platform](/components/diagrams/comp_aks.vsdx) - AKS deployment with WAF aligned paramets.
 
 #### Networking
 * [Single virtual network - Pattern 1](/concepts/networksegmentation.md)
@@ -33,3 +33,4 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 #### Foundation
 * [All-in-one foundation platform](/Solutions/Foundation/foundation.md)
 * [Hub and spoke foundation](/Solutions/Foundation_hub_spoke/foundation.md)
+* [Azure Kubernetes Services - Hub/Spoke model](/Solutions/aks_hub_spoke/aks_hub_spoke.md)
