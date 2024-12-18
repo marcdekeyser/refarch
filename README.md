@@ -31,8 +31,8 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 
 ### Solutions
 #### Foundation
-* [All-in-one foundation platform](/Solutions/Foundation/foundation.md)
-* [Hub and spoke foundation](/Solutions/Foundation_hub_spoke/foundation.md)
-* [Azure Kubernetes Services - Hub/Spoke model](/Solutions/aks_hub_spoke/aks_hub_spoke.md)
-* [Azure Container Apps - Hub/Spoke model](/Solutions/aca_hub_spoke/aca_hub_spoke.md)
-* [Azure Container Apps with Azure OpenAI - Hub/Spoke model](/Solutions/aca_hub_spoke_OpenAI/aca_hub_spoke_openai.md)
+* [All-in-one foundation platform](/Solutions/Foundation/foundation.md) - Simple all in one platform resources can be deployed in.
+* [Hub and spoke foundation](/Solutions/Foundation_hub_spoke/foundation.md) - Hub/Spoke network with common resources in the hub network. The spoke network can be used for deploying application resources.
+* [Azure Kubernetes Services - Hub/Spoke model](/Solutions/aks_hub_spoke/aks_hub_spoke.md) - Hub/Spoke network AKS deployment.
+* [Azure Container Apps - Hub/Spoke model](/Solutions/aca_hub_spoke/aca_hub_spoke.md) - Hub/Spoke Azure Container apps deployment.
+* [Azure Container Apps with Azure OpenAI - Hub/Spoke model](/Solutions/aca_hub_spoke_OpenAI/aca_hub_spoke_openai.md) - Hub/Spoke Azure Container apps deployment with OpenAI/GPT3.5 Turbo.
