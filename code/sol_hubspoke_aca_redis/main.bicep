@@ -65,7 +65,6 @@ param vmAdminPassword string
 
 var baseName = '${location}-${appname}-${env}'
 var suffix = uniqueString(subscription().subscriptionId, resourceGroup().id)
-var openAiDnsZoneName = 'privatelink.openai.azure.com' 
 var redisPrivateDnsZoneNames = 'privatelink.redis.cache.windows.net'
 var redisResourceName = 'redis-${baseName}'
 
