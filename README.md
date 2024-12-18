@@ -35,3 +35,4 @@ Each includes both bicep 'ready-to-deploy' code, as well as a 'Deploy to Azure' 
 * [Hub and spoke foundation](/Solutions/Foundation_hub_spoke/foundation.md)
 * [Azure Kubernetes Services - Hub/Spoke model](/Solutions/aks_hub_spoke/aks_hub_spoke.md)
 * [Azure Container Apps - Hub/Spoke model](/Solutions/aca_hub_spoke/aca_hub_spoke.md)
+* [Azure Container Apps with Azure OpenAI - Hub/Spoke model](/Solutions/aca_hub_spoke/aca_hub_spoke_openai.md)
