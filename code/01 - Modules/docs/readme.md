@@ -8,3 +8,5 @@
 * [virtual network](/code/01%20-%20Modules/docs/vNET.md)
 * [Network Security Group](/code/01%20-%20Modules/docs/nsg.md)
 * [Private DNS Zone](/code/01%20-%20Modules/docs/privateDnsZone.md)
+* [Private Endpoint](/code/01%20-%20Modules/docs/privateEndpoint.md)
+* [Private Networking](/code/01%20-%20Modules/docs/privateNetworking.md)
