@@ -49,7 +49,7 @@ For help on deploying bicep resourced please refer to [this page](/code/DeployBi
 - *Virtual Machine Admin Passowrd*: Password for the virtual machines.
 
 ## Design
-![Foundational solution platform](/Solutions/aca_hub_spoke_OpenAI/images/sol_aks_hub_spoke_openai.png)
+![Foundational solution platform](/Solutions/aca_hub_spoke_OpenAI/images/sol_aks_hub_spoke_openAI.png)
 *Diagram: Design diagram of the foundational solution*
 [visio file](/Solutions/aca_hub_spoke/diagram_OpenAI/sol_aca_hub_spoke_openai.vsdx)
 
